@@ -260,7 +260,7 @@
     ```
 - `@RequestParam(defaultValue = "guest")`
     - `defaultValue`를 설정해주면 `""`, `null`인 상황에서 **기본 값**을 설정해줄 수 있음
-    -**빈 문자 `""`도 defaultValue로 치환**됨을 주의
+    - **빈 문자 `""`도 defaultValue로 치환**됨을 주의
     - `defaultValue` 인수가 들어가면 required의 참/거짓 여부가 상관 없어짐
     ```java
         @ResponseBody
@@ -570,7 +570,6 @@
         - `application/json`으로 응답하는 RestAPI는 body를 직접 입력할 필요가 있기 때문
     
 ### HTTP 메시지 컨버터
-
 - 기본적으로 `@Controller` 내부 메서드는 스트링을 반환할 때 `viewResolver`를 호출함
 - `@ResponseBody`를 사용하는 경우 동작이 달라짐
     - ![Alt text](images/sect06/image.png)
@@ -613,19 +612,40 @@
 
 - 예시. `content-type:application/json`, `@RequestBody String data`
     - 0순위, `byte[]`가 아니므로 1순위로 넘어감
-    - 1순위, `String` 만족함, `*/*`이므로 `StringHttpMessageConverter`로 다룸
+    - **1순위**, `String` 만족함, `*/*`이므로 `StringHttpMessageConverter`로 다룸
 - 예시. `content-type: text/html`, `@RequestBody HelloData data`
     - 0순위, `byte[]`가 아니므로 1순위로 넘어감
     - 1순위, `String`이 아니므로 2순위로 넘어감
-    - 2순위, `Object` 만족, `application/json`이 아니므로 **탈락**
+    - 2순위, `Object` 만족, `application/json`이 아니므로 **오류**
 
-### 요청 매핑 핸들러 어댑터
-![Alt text](images/sect05/image.png)
-- 위와 같은 SpringMVC 구조에서, `@RequestMapping`을 처리하는 핸들러 어댑터
+### `@RequestMapping` 핸들러 어댑터
 
-1. ArgumentResolver
-
-2. ReturnValueHandler
+- 그렇다면, `HTTP 메시지 컨버터`는 스프링 MVC 구조 어디쯤에서 사용되는 것인가?
+- ![Alt text](images/sect05/image.png)
+    - 위 스프링 MVC 구조 3, 4, 5 과정에 관여하는 **핸들러 어댑터**가 `@RequestMapping`을 처리할 때 사용함
+- `RequestMappingHandlerAdapter` 동작 방식
+    - ![Alt text](images/sect06/image-1.png)
+1. `ArgumentResolver`
+    - 생각해보면, 애노테이션 기반의 컨트롤러는 매우 다양한 **파라미터**를 사용할 수 있음
+        - `HttpServletRequest`, `Model`, `@RequestParam`, `HttpEntity<>`, `@RequestBody`, ...
+    - 이렇게 파라미터를 유연하게 처리할 수 있는 이유가 `ArgumentResolver` 덕분임
+        - 풀 네임: `HandlerMethodArgumentResolver`
+    - **동작 방식**은 다음과 같음
+        1. `supportsParameter()`를 호출해서 해당 파라미터를 지원하는지 체크함
+        2. 지원하면 `resolveArgument()`를 호출하여 실제 객체를 생성함
+        3. 만들어둔 객체를 컨트롤러 호출 시점에 넘김
+    - 원한다면 **직접 인터페이스를 확장해**서 원하는 `ArgumentResolver`를 만들 수도 있음
+        - 스프링은 대부분의 기능을 제공하기 때문에 실제 확장하는 일이 많지는 않음
+        - 실제 확장하는 예제는 향후 **로그인 처리**에서 진행함
+2. `ReturnValueHandler`
+    - 컨트롤러에서 뷰 논리 이름을 반환해도 동작하는 이유가 이 `ReturnValueHandler` 덕분임
+        - `String`, `ModelAndView`, `@ResponseBody`, `HttpEntity<>`
+    - 컨트롤러의 반환 값을 변환하고 처리함
+        - 풀 네임: `HandlerMethodReturnValueHandler`
+3. **HTTP 메시지 컨버터 위치**
+    - HTTP 메시지 컨버터를 사용하는 `@RequestBody`는 컨트롤러가 필요로 하는 파라미터 값에 사용됨
+    - HTTP 메시지 컨버터의 위치는 다음과 같음
+        - ![Alt text](images/sect06/image-2.png)
 
 --- 
 ## 다음 글
