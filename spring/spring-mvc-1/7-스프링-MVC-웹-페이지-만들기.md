@@ -29,14 +29,14 @@
         - 핵심 비즈니스 모델을 개발함
         - 이후 HTML이 나오면 이 HTML을 뷰 템플릿으로 변환해서 동적으로 화면과 화면의 흐름을 제어함
 
-> React, Vue.js 같은 웹 클라이언트 기술을 사용하고, 웹 프론트엔드 개발자가 별도로 있으면, 웹 프론트엔드 개발자가 웹 퍼블리셔 역할까지 포함해서 하는 경우도 있음.
+> React, Vue.js 같은 웹 클라이언트 기술을 사용하고, 웹 프론트엔드 개발자가 별도로 있으면, 웹 프론트엔드 개발자가 웹 퍼블리셔 역할까지 포함해서 하는 경우도 있음
 
-> 웹 클라이언트 기술을 사용하면, **웹 프론트엔드 개발자**가 **HTML을 동적으로 만드는 역할**과 **웹 화면의 흐름을 담당**함.
+> 웹 클라이언트 기술을 사용하면, **웹 프론트엔드 개발자**가 **HTML을 동적으로 만드는 역할**과 **웹 화면의 흐름을 담당**함
 
-> 이 경우 백엔드 개발자는 HTML 뷰 템플릿을 직접 만지는 대신에, **HTTP API**를 통해 웹 클라이언트가 필요로 하는 **데이터와 기능을 제공**하면 됨.
+> 이 경우 백엔드 개발자는 HTML 뷰 템플릿을 직접 만지는 대신에, **HTTP API**를 통해 웹 클라이언트가 필요로 하는 **데이터와 기능을 제공**하면 됨
 
 ### 타임리프 사용
-- 타임리프 사용은 다음 선언으로 시작함
+- **타임리프** 사용은 다음 선언으로 시작함
     - `<html xmlns:th="http://www.thymeleaf.org">`
 - `th:` 표현 방식은 다음과 같음
     - `th:each="item : ${items}"` 
@@ -53,7 +53,7 @@
         1. **소괄호** 표현, `@{ ... (...)}`
             - `@{...}` 내부에 `|` 가 들어가지 않음
             - 소괄호 `()` 내부는 `key=value, ...` 쌍으로 되어 있음
-                - 모델 등 데이터를 삽입할 때 새 변수로 만듦.
+                - 모델 등 데이터를 삽입할 때 새 변수로 만듦
                     - `@{items/{itemId}}`로, 이떄 `{itemId}`는 소괄호에서 정의되어야 함
                     - `@{ ... (itemId=${item.id}, ...)}`
                 - `key`가 앞서 선언한 변수 이름이 아니라면 쿼리 쪽으로 붙음
@@ -64,9 +64,9 @@
 
 ### @ModelAttribute 사용
 - `@ModelAttribute`에는 두 가지 용도가 있음
-    1. Request로부터 param을 받아와 모델 객체를 가져옴 
+    1. Request로부터 param을 받아와 **모델 객체를 가져옴** 
         - param key를 키워드로 모델 객체의 setXXX를 호출하여 할당
-    2. 받아온 모델 객체와 동일한 이름의 모델을 뷰 리졸버에 넘김
+    2. 받아온 모델 객체와 동일한 이름의 **모델을 뷰 리졸버에 넘김**
         - 따라서, `Model model`, `model.addAttribute("item", item)` 생략 가능
 - `redirect:/basic/items/{itemId}`
     1. `{itemId}`
@@ -86,6 +86,7 @@
 - `새로고침` 은 내가 마지막에 했던 행위를 반복하는 것
     - 마지막 요청이 `POST`면, 데이터도 동일하게 제출됨
         - ![Alt text](images/sect07/image-5.png)
+        - `POST` 요청을 여러 번 보내게 구성하는 건 좋지 않은 설계 방식
 - **Post, Redirect Get 패턴** 적용
     - ![Alt text](images/sect07/image-6.png)
     - 새로고침 문제를 해결하려면 상품 저장 후에 뷰 템플릿으로 이동하는 것 대신, 상품 상세 화면으로 리다이렉트 호출해주면 됨
@@ -96,7 +97,8 @@
         - `RedirectAttributes` 로 해결
 
 ### RedirectAttributes
-- Redirect와 관련된 속성들을 넣음
+- `RedirectAttributes redirectAttributes`
+- `Redirect URL`에 삽입할 데이터, URL에 붙일 쿼리를 설정함
     ```java
         @PostMapping("/add")
         public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
@@ -106,9 +108,9 @@
             return "redirect:/basic/items/{itemId}";
         }
     ```
-    - return에 직접 들어가는 key인 `itemId`는 값이 할당됨
+    - return URL 문자열에 직접 삽입되는 `itemId`는 값이 할당됨
     - return에 들어가지 않는 나머지 key들은 쿼리로 치환됨
-    - `/basic/items/9?status=true` 
+    - -> `/basic/items/9?status=true` 
 - `item.html`에서는 다음처럼 받아 쓸 수 있음
     ```html
         <!-- 저장 완료 start -->
@@ -117,9 +119,5 @@
     ```
     - `${param}`은 예약어
         - 멤버 데이터로 key를 호출하면 value가 나옴 
+
 ---
-## 다음 글
-
-### 8. [다음으로](8-다음으로.md)
-
---- 
