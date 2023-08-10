@@ -8,8 +8,8 @@
 
 
 ### 서블릿을 이용한 req.getWriter()
-- 자바 코드에 HTML을 넣어, 매우 폼이 조작해 보임
-- 반면 템플릿 엔진은 HTML에 자바 코드를 삽입하는 방식
+- **자바 코드**에 HTML 문자열을 넣어, 형태가 조잡함
+- 반면 **템플릿 엔진**은 **HTML**에 자바 코드를 삽입하는 방식
     - 템플릿 엔진을 사용하면 HTML 문서에서 필요한 곳만 코드를 적용해서 동적으로 변경할 수 있음
     - 템플릿 엔진에는 JSP, Thymeleaf, Freemarker, Velocity 등이 있음
 
@@ -17,7 +17,7 @@
 - HTML 폼에 자바 코드를 삽입하는 방식의 템플릿 엔진임
 - `<%@ page contentType="text/html;charset=UTF-8" language="java" %>` 붙여야 JSP로 인식
 - `request`, `response` 예약어를 `HttpServletRequest/Response` 에서와 동일하게 사용할 수 있음
-    ```html
+    ```jsp
     <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ page import="hello.servlet.domain.member.MemberRepository" %>
     <%@ page import="hello.servlet.domain.member.Member" %>
@@ -50,7 +50,7 @@
     ```
 - 한계점이 있음
     - 비즈니스 로직을 처리하는 부분과, 뷰 렌더링을 하는 부분이 한 페이지에 모여 있음
-        - 개발실에서는 `head.jsp`를 분리해서 세션을 따로 처리했음
+        - 기상SW개발실에서는 `head.jsp`를 분리해서 세션 로직을 따로 처리했음
     - 즉, JSP가 너무 많은 역할을 하고, 데이터를 조회하는 리포지토리 등등 다양한 코드가 모두 JSP에 노출되어 있음
     - 수백 수천줄이 넘어가는 JSP는 유지보수가 지옥임
 - **MVC 패턴**은 **화면(View)**, **조종(Controller)** 을 분리하여 유지보수에 용이하게 도와줌
@@ -96,12 +96,12 @@
     - **forward**는 **서버 내부에서 일어나는 호출**임
         - `RequestDispatcher.forward(req, res)`
         - 클라이언트가 전혀 인지할 수 없음
-- **WEB-INF 경로**
-    - 직접 부르지 않고, 컨트롤을 거쳐서 부르고 싶을 때 `WEB-INF` 경로를 활용함 
+- JSP에서의 **WEB-INF 경로**
+    - JSP에서는 컨트롤러를 거쳐서 부를 때 경로를 직접 부르지 않고, `WEB-INF` 내부 경로를 이용함 
     - WAS 룰, 디자인 패턴
 
 - 또한, JSP에서는 모델 데이터를 **프로퍼티 접근법**으로 간단히 다룰 수 있음
-    ```html
+    ```jsp
     <ul>
         <li>id=${member.id}</li>
         <li>username=${member.username}</li>
@@ -109,7 +109,7 @@
     </ul>
     ```
     - 코드는 다음과 동일함
-    ```html
+    ```jsp
     <ul>
         <li>id=<%(Member)request.getAttribute("member").getId()%></li>
         <li>username=<%(Member)request.getAttribute("member").getUsername()%><</li>
@@ -120,7 +120,7 @@
 1. 모델 by **request** in `HttpServletRequest`
 2. 뷰 by **JSP 페이지**
     - 표출에만 집중함, 모델에 프로퍼티 접근법 사용, 굉장히 깔끔해짐
-    ```html
+    ```jsp
     <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <html>
     <head>
