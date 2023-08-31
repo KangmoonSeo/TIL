@@ -56,3 +56,30 @@
 - 엔티티에 대응하는 테이블에는 다음과 같이 Column이 추가됨
     - ![Alt text](images/스프링-부트와-AWS로-혼자-구현하는-웹-서비스/image.png)
 
+### fragment css, js 배치 전략
+- HTML은 위에서부터 코드가 실행되므로 **header가 다 실행되고서야 body가 실행됨**
+- fragment를 `header`와 `footer`로 구성했을 경우 `header`->`(body)`->`footer` 순으로 실행
+- 이때, css를 `header`에, js를 `footer`두는 전략을 실행할 것
+    - body를 그린 후에 css를 불러오면 깨진 화면을 사용자에게 보여주게 됨
+        -> css를 `header`에 배치
+    - body 이전에 용량이 큰 js를 불러오면 body 그려오는 게 늦어짐
+        -> js를 `footer`에 배치
+
+### Front-end with RestAPI
+- Thymeleaf로 클라이언트를 구현한다고 해도, ajax를 통해 api를 받아오도록 설계함
+- Model로 데이터를 넘기는 로직은 `findAll()` 만 사용
+    - 프론트 분리했을 때를 생각할 것
+    - 실무에서는 view all 페이지 별도 작성, get과 쿼리 페이지 넘버링으로 select (`Pageable`)
+
+
+### 스프링 시큐리티와 OAuth 2.0으로 로그인 기능 구현
+> 스프링 부트 2.x.x 기준으로 서술됨
+
+- OAuth 2.0을 사용하여 다음 기능을 직접 구현하는 걸 생략할 수 있음
+    - 로그인 시 보안
+    - 회원가입 시 이메일 혹은 전화번호 인증
+    - 비밀번호 찾기
+    - 비밀번호 변경
+    - 회원정보 변경
+- 이러한 구현들을 모두 구글, 페이스북, 네이버에 맡기고 서비스 개발에 집중할 수 있음
+
